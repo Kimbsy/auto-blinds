@@ -1,36 +1,48 @@
-#define OUT1  2
-#define OUT2  3
-#define OUT3  4
-#define OUT4  5
+#define OUT1 2
+#define OUT2 3
+#define OUT3 4
+#define OUT4 5
+#define IN1 6
+#define IN2 7
 
 int steps = 0;
 int direction = 1;
 
-void setup()
-{
+void setup() {
   Serial.begin(115200);
   pinMode(OUT1, OUTPUT);
   pinMode(OUT2, OUTPUT);
   pinMode(OUT3, OUTPUT);
   pinMode(OUT4, OUTPUT);
+  pinMode(IN1, INPUT);
+  pinMode(IN2, INPUT);
   delay(1000);
 }
 
-void loop()
-{
-  // doSteps(4096);
-  doRotations(1);
-  delay(1000);
-  direction = -direction;
+void loop() {
+  getInput();
+  doSteps(1);
+}
+
+void getInput() {
+  Serial.println(digitalRead(IN1));
+  Serial.println(digitalRead(IN2));
+  if (digitalRead(IN1) == HIGH) {
+    direction = 1;
+  } else if (digitalRead(IN2) == HIGH) {
+    direction = -1;
+  } else {
+    direction = 0;
+  }
 }
 
 void doRotations(int rotationCount) {
   doSteps(4096 * rotationCount);
 }
 
-void doSteps(int stepCount){
-  for (int i = 0; i < stepCount; i++){
-    switch(steps){
+void doSteps(int stepCount) {
+  for (int i = 0; i < stepCount; i++) {
+    switch(steps) {
       case 0:
         digitalWrite(OUT1, LOW);
         digitalWrite(OUT2, LOW);
@@ -91,7 +103,7 @@ void doSteps(int stepCount){
   }
 }
 
-void incByDirection(){
+void incByDirection() {
   steps += direction;
   if (steps > 7) { steps = 0; }
   if (steps < 0) { steps = 7; }
